@@ -1,11 +1,13 @@
 import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { getUsername } from '../logic';
-import { useAppActions, useAppState } from '../state/AppState';
+import { getBackButtonLabel, useAppActions, useAppState } from '../state/AppState';
 
 export function MatchDetailView() {
   const { state } = useAppState();
   const actions = useAppActions();
+  const backLabel = getBackButtonLabel(state);
   const tournament = state.tournaments.find((entry) => entry.id === state.selectedTournamentId);
+  const isManageMode = state.currentView === 'manage-match';
   const match = useMemo(() => {
     if (!tournament?.bracket || !state.selectedMatchId) {
       return null;
@@ -138,14 +140,24 @@ export function MatchDetailView() {
     <section className="page-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Match detail</p>
+          <p className="eyebrow">{isManageMode ? 'View Gestisci Partita' : 'View Partita'}</p>
           <h2>{getUsername(state.users, currentMatch.playerAId)} vs {getUsername(state.users, currentMatch.playerBId)}</h2>
           <p className="muted">Round {currentMatch.round} · {currentMatch.status}</p>
         </div>
         <div className="card-actions">
-          <button type="button" className="secondary-button" onClick={() => actions.openTournament(tournamentId)}>
-            Back to bracket
+          <button type="button" className="secondary-button" onClick={() => actions.goBack()}>
+            {backLabel}
           </button>
+          {isOrganizer && !isManageMode ? (
+            <button type="button" className="primary-button" onClick={() => actions.setView('manage-match', tournamentId, currentMatch.id)}>
+              Gestisci partita
+            </button>
+          ) : null}
+          {isManageMode ? (
+            <button type="button" className="secondary-button" onClick={() => actions.setView('match', tournamentId, currentMatch.id)}>
+              Torna al dettaglio
+            </button>
+          ) : null}
         </div>
       </div>
 
@@ -159,7 +171,7 @@ export function MatchDetailView() {
 
         <article className="detail-card">
           <h3>Shot entry</h3>
-          {currentMatch.playerBId ? (
+          {isManageMode && currentMatch.playerBId ? (
             <form className="shot-form" onSubmit={handleSubmit}>
               <label>
                 Shooter
@@ -187,7 +199,7 @@ export function MatchDetailView() {
               <button type="submit" className="primary-button" disabled={!canSubmit}>Register shot</button>
             </form>
           ) : (
-            <p className="muted">This match is a bye. The player advanced automatically.</p>
+            <p className="muted">{isManageMode ? 'This match is a bye. The player advanced automatically.' : 'Shot registration is available in management mode.'}</p>
           )}
         </article>
       </div>

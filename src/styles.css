@@ -59,12 +59,18 @@ button {
 
 .navbar {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   border-radius: 24px;
   padding: 20px 24px;
   margin-bottom: 18px;
+}
+
+.navbar-brand {
+  display: grid;
+  gap: 8px;
+  min-width: 240px;
 }
 
 .navbar h1,
@@ -83,7 +89,9 @@ button {
 .versus-line,
 .stats-grid,
 .detail-grid,
-.nav-tabs {
+.home-actions,
+.heading-actions,
+.hero-summary-grid {
   display: flex;
   align-items: center;
   gap: 12px;
@@ -92,6 +100,126 @@ button {
 .navbar-actions {
   flex-wrap: wrap;
   justify-content: flex-end;
+}
+
+.global-nav {
+  flex: 1;
+  min-width: 260px;
+  max-width: 420px;
+}
+
+.global-nav .select-label {
+  width: 100%;
+}
+
+.global-nav .select-label select {
+  width: 100%;
+}
+
+.heading-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+
+.hero-summary-grid,
+.home-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.hero-summary-grid {
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  margin-bottom: 18px;
+}
+
+.summary-card,
+.home-card {
+  border-radius: 24px;
+  padding: 18px;
+  border: 1px solid rgba(36, 22, 15, 0.08);
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: var(--shadow);
+}
+
+.summary-card {
+  display: grid;
+  gap: 6px;
+}
+
+.summary-label,
+.home-card h3,
+.search-label {
+  font-weight: 800;
+}
+
+.home-grid {
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  margin-bottom: 18px;
+}
+
+.home-card {
+  display: grid;
+  gap: 12px;
+  min-height: 220px;
+}
+
+.home-card .primary-button {
+  align-self: end;
+  justify-self: start;
+}
+
+.home-actions {
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.search-label {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 220px;
+}
+
+.search-label input {
+  min-width: 220px;
+  border: 1px solid rgba(36, 22, 15, 0.16);
+  border-radius: 14px;
+  padding: 12px 14px;
+  background: rgba(255, 255, 255, 0.96);
+  color: var(--ink);
+}
+
+.inline-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.text-button {
+  border: 0;
+  background: transparent;
+  color: var(--primary-strong);
+  font-weight: 800;
+  padding: 0;
+}
+
+.text-button:hover {
+  text-decoration: underline;
+}
+
+.history-actions-cell {
+  display: grid;
+  gap: 8px;
+}
+
+.manage-user-form,
+.manage-tournament-form {
+  margin-bottom: 18px;
+}
+
+.compact {
+  min-width: 150px;
 }
 
 .current-user-chip,
@@ -133,10 +261,6 @@ button {
   padding: 12px 14px;
   background: rgba(255, 255, 255, 0.96);
   color: var(--ink);
-}
-
-.nav-tabs {
-  margin-bottom: 18px;
 }
 
 .tab {
@@ -348,9 +472,15 @@ button {
   .detail-grid:not(.single),
   .card-topline,
   .match-card-header,
-  .card-actions {
+  .card-actions,
+  .heading-actions {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .global-nav {
+    width: 100%;
+    max-width: none;
   }
 
   .detail-grid:not(.single) {
@@ -361,7 +491,8 @@ button {
   .form-card input,
   .form-card select,
   .shot-form input,
-  .shot-form select {
+  .shot-form select,
+  .search-label input {
     min-width: 100%;
   }
 }

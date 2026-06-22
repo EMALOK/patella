@@ -1,35 +1,35 @@
 import { useMemo, useState } from 'react';
-import { getBackButtonLabel, useAppActions, useAppState } from '../state/AppState';
 import { getUsername } from '../logic';
+import { getBackButtonLabel, useAppActions, useAppState } from '../state/AppState';
 
-export function DashboardView() {
+export function MyTournamentsView() {
   const { state } = useAppState();
   const actions = useAppActions();
-  const [query, setQuery] = useState('');
   const backLabel = getBackButtonLabel(state);
+  const [query, setQuery] = useState('');
 
   const tournaments = useMemo(() => {
     const normalizedQuery = query.trim().toLowerCase();
-
     return state.tournaments.filter((tournament) => {
+      if (tournament.organizerId !== state.currentUserId) {
+        return false;
+      }
+
       if (!normalizedQuery) {
         return true;
       }
 
-      return [tournament.name, tournament.location, tournament.status, getUsername(state.users, tournament.organizerId)]
-        .join(' ')
-        .toLowerCase()
-        .includes(normalizedQuery);
+      return [tournament.name, tournament.location, tournament.status].join(' ').toLowerCase().includes(normalizedQuery);
     });
-  }, [query, state.tournaments, state.users]);
+  }, [query, state.currentUserId, state.tournaments]);
 
   return (
     <section className="page-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">View Tornei</p>
-          <h2>Filtro e lista di tornei</h2>
-          <p className="muted">Da qui puoi aprire un torneo, entrare nella gestione o creare un nuovo tabellone.</p>
+          <p className="eyebrow">View I Miei Tornei</p>
+          <h2>Tornei organizzati</h2>
+          <p className="muted">Tornei in cui l’utente corrente è organizzatore, con accesso alla scheda e alla gestione.</p>
         </div>
         <div className="heading-actions">
           <button type="button" className="secondary-button" onClick={() => actions.goBack()}>
@@ -39,16 +39,11 @@ export function DashboardView() {
             Filtro
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Cerca torneo" />
           </label>
-          <button type="button" className="primary-button" onClick={() => actions.setView('create')}>
-            Crea torneo
-          </button>
         </div>
       </div>
 
       <div className="grid-cards">
         {tournaments.map((tournament) => {
-          const organizerName = getUsername(state.users, tournament.organizerId);
-          const isOrganizer = tournament.organizerId === state.currentUserId;
           const winnerName = tournament.bracket?.winnerId ? getUsername(state.users, tournament.bracket.winnerId) : null;
 
           return (
@@ -60,25 +55,20 @@ export function DashboardView() {
                 </div>
                 <span className={`status-badge ${tournament.status.toLowerCase()}`}>{tournament.status}</span>
               </div>
-              <p className="muted">Organizer: {organizerName}</p>
-              <p className="muted">Participants: {tournament.participants.length} / {tournament.maxParticipants}</p>
-              {tournament.status === 'COMPLETED' ? (
-                <p className="muted">Winner: {winnerName ?? 'TBD'}</p>
-              ) : null}
+              <p className="muted">Partecipanti: {tournament.participants.length}</p>
+              {winnerName ? <p className="muted">Winner: {winnerName}</p> : null}
               <div className="card-actions">
                 <button type="button" className="secondary-button" onClick={() => actions.openTournament(tournament.id)}>
-                  Open detail
+                  Visualizza torneo
                 </button>
-                {isOrganizer ? (
-                  <button type="button" className="primary-button" onClick={() => actions.setView('manage-tournament', tournament.id)}>
-                    Manage
-                  </button>
-                ) : null}
+                <button type="button" className="primary-button" onClick={() => actions.setView('manage-tournament', tournament.id)}>
+                  Gestisci torneo
+                </button>
               </div>
             </article>
           );
         })}
-        {!tournaments.length ? <p className="muted">Nessun torneo trovato.</p> : null}
+        {!tournaments.length ? <p className="muted">Nessun torneo organizzato trovato.</p> : null}
       </div>
     </section>
   );

@@ -1,6 +1,18 @@
 export type TournamentStatus = 'OPEN' | 'IN_PROGRESS' | 'COMPLETED';
 export type MatchStatus = 'PENDING' | 'IN_PROGRESS' | 'COMPLETED';
-export type ViewName = 'dashboard' | 'profile' | 'create' | 'tournament' | 'match';
+export type ViewName =
+  | 'home'
+  | 'manage-user'
+  | 'users'
+  | 'user'
+  | 'matches'
+  | 'match'
+  | 'tournaments'
+  | 'tournament'
+  | 'my-tournaments'
+  | 'create'
+  | 'manage-tournament'
+  | 'manage-match';
 
 export interface UserStats {
   elo: number;
@@ -67,6 +79,7 @@ export interface Tournament {
   status: TournamentStatus;
   participants: string[];
   bracket: Bracket | null;
+  maxParticipants: number;
   drinkLimit: number;
   bannedUsers: string[];
   drinkCountByUser: Record<string, number>;
@@ -79,6 +92,7 @@ export interface AppState {
   currentView: ViewName;
   selectedTournamentId: string | null;
   selectedMatchId: string | null;
+  selectedUserId: string | null;
 }
 
 export interface ShotInput {

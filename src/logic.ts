@@ -339,7 +339,14 @@ export function updateUsersAfterMatch(users: User[], match: Match): User[] {
   });
 }
 
-export function createTournamentTemplate(name: string, location: string, date: string, organizerId: string, drinkLimit: number = 20): Tournament {
+export function createTournamentTemplate(
+  name: string,
+  location: string,
+  date: string,
+  organizerId: string,
+  drinkLimit: number = 20,
+  maxParticipants: number = 16
+): Tournament {
   return {
     id: createId('tour'),
     name,
@@ -349,6 +356,7 @@ export function createTournamentTemplate(name: string, location: string, date: s
     status: 'OPEN',
     participants: [],
     bracket: null,
+    maxParticipants,
     drinkLimit,
     bannedUsers: [],
     drinkCountByUser: {},

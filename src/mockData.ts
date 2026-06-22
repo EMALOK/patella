@@ -271,6 +271,7 @@ function simulateHistoricalTournament(
       rounds,
       winnerId: contenders[0],
     },
+      maxParticipants: participants.length,
     drinkLimit,
     bannedUsers: [],
     drinkCountByUser,
@@ -313,6 +314,7 @@ function buildInitialState(): AppState {
     status: 'OPEN',
     participants: ['user_2', 'user_3', 'user_4'],
     bracket: null,
+    maxParticipants: 16,
     drinkLimit: 20,
     bannedUsers: [],
     drinkCountByUser: {
@@ -326,9 +328,10 @@ function buildInitialState(): AppState {
     currentUserId: 'user_1',
     users,
     tournaments: [liveTournament, ...historicalTournaments.reverse()],
-    currentView: 'dashboard',
+    currentView: 'home',
     selectedTournamentId: liveTournamentId,
     selectedMatchId: null,
+    selectedUserId: 'user_1',
   };
 }
 

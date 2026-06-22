@@ -1,10 +1,12 @@
 import { useMemo, useState } from 'react';
-import { useAppState } from '../state/AppState';
+import { getBackButtonLabel, useAppActions, useAppState } from '../state/AppState';
 
 const HISTORY_PAGE_SIZE = 25;
 
 interface HistoryItem {
   id: string;
+  tournamentId: string;
+  matchId: string;
   tournamentName: string;
   date: string;
   opponent: string;
@@ -14,8 +16,11 @@ interface HistoryItem {
 
 export function ProfileView() {
   const { state } = useAppState();
+  const actions = useAppActions();
+  const backLabel = getBackButtonLabel(state);
   const [historyPage, setHistoryPage] = useState(0);
-  const user = state.users.find((entry) => entry.id === state.currentUserId);
+  const userId = state.selectedUserId ?? state.currentUserId;
+  const user = state.users.find((entry) => entry.id === userId);
 
   if (!user) {
     return null;
@@ -75,6 +80,8 @@ export function ProfileView() {
 
             history.push({
               id: `${tournament.id}_${match.id}`,
+              tournamentId: tournament.id,
+              matchId: match.id,
               tournamentName: tournament.name,
               date: lastShotDate,
               opponent,
@@ -148,8 +155,22 @@ export function ProfileView() {
     <section className="page-panel">
       <div className="page-heading">
         <div>
-          <p className="eyebrow">Profile</p>
+          <p className="eyebrow">View Utente</p>
           <h2>{user.username}</h2>
+          <p className="muted">Cronologia tornei, cronologia partite, statistiche e segnalazioni.</p>
+        </div>
+        <div className="card-actions">
+          <button type="button" className="secondary-button" onClick={() => actions.goBack()}>
+            {backLabel}
+          </button>
+          <button type="button" className="secondary-button" onClick={() => actions.openUser(user.id)}>
+            Visualizza utente
+          </button>
+          {user.id === state.currentUserId ? (
+            <button type="button" className="primary-button" onClick={() => actions.setView('manage-user')}>
+              Gestisci profilo
+            </button>
+          ) : null}
         </div>
       </div>
       <div className="stats-grid">
@@ -282,10 +303,19 @@ export function ProfileView() {
                   {visibleHistory.map((item) => (
                     <tr key={item.id}>
                       <td>{new Date(item.date).toLocaleDateString()}</td>
-                      <td>{item.tournamentName}</td>
+                      <td>
+                        <button type="button" className="text-button" onClick={() => actions.openTournament(item.tournamentId)}>
+                          {item.tournamentName}
+                        </button>
+                      </td>
                       <td>{item.opponent}</td>
                       <td className={item.result === 'W' ? 'success' : 'danger'}>{item.result}</td>
-                      <td>{item.score}</td>
+                      <td className="history-actions-cell">
+                        <span>{item.score}</span>
+                        <button type="button" className="text-button" onClick={() => actions.openMatch(item.tournamentId, item.matchId)}>
+                          Visualizza partita
+                        </button>
+                      </td>
                     </tr>
                   ))}
                 </tbody>
